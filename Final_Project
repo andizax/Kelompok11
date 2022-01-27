@@ -109,18 +109,12 @@ void add(){
 //procedure setor() untuk setor uang - Kenneth William Noverianto
 void setor(){
 	clear
-	
-	//		DECLARE AREA
 	char name[50];
 	ll int saldoT;
 	int found = 0;
 	nasabah s1;
-	
-	//		OPEN FILE
 	fp = fopen("datanasabah.txt", "r");
 	fpTemp = fopen("temp.txt", "w");
-	
-	//		INTERFACE
 	printf ("================================================================\n");
 	printf ("                                                               |");
 	printf ("\n                         BANK SUNIB                            |\n");
@@ -129,13 +123,13 @@ void setor(){
     printf ("                       PENYETORAN SALDO                        |\n");
     printf ("================================================================\n");
 	
-	//		PENGECEKAN FILE
 	if(fp == NULL) {
 		printf ("\n\t\t    Data Tidak Ditemukan!\n\n");
 		printf ("================================================================\n");
+		
 	}
 		
-	//		SEARCHING & KALKULASI SALDO
+		
 	fflush(stdin);
 	printf("\nMasukkan Nama Nasabah\t\t: "); scanf("%[^\n]s", name);
 	while(fread(&s1, sizeof(nasabah),1,fp))	{
@@ -145,27 +139,30 @@ void setor(){
 				fflush(stdin);
 				printf("Masukkan Jumlah Setor Saldo\t: "); scanf("%lld", &saldoT);
 				
-				if(saldoT < 100000 && saldoT % 50000!= 0)
+				if(saldoT < 100000 || saldoT % 50000 != 0)
 				{
-					printf("\nJumlah Yang Anda Input Salah!");
-					continue;
+					found = 2;
 				}
-				s1.saldoA = s1.saldoA + saldoT;
-					
+				else
+				{
+					s1.saldoA = s1.saldoA + saldoT;
+				}
+				
+	
 			}
 			fwrite(&s1, sizeof(nasabah), 1, fpTemp);
 	}
-	//		CLOSE FILE
 	fclose(fp);
 	fclose(fpTemp);
 		
-	
-	if(found) {
+		
+	if(found == 1)
+	{	
 		fpTemp = fopen("temp.txt", "r");
 		fp = fopen("datanasabah.txt", "w");
 			
 		while(fread(&s1, sizeof(nasabah),1,fpTemp)) {
-			fwrite(&s1, sizeof(nasabah),1,fp);
+		fwrite(&s1, sizeof(nasabah),1,fp);
 		}
 			
 		printf("\nPenyetoran Saldo Berhasil!\n");
@@ -173,10 +170,17 @@ void setor(){
 		getch();
 		fclose(fp);
 		fclose(fpTemp);
-	}			
-	else {
+	}
+	else if(found == 0)
+	{
 		printf("\nData Nasabah Tidak Ditemukan!\n");
 		
+		printf("\nTekan ENTER Untuk Melanjutkan.\n");
+		getch();
+	}
+	else if(found == 2)
+	{
+		printf("\nJumlah Yang Anda Input Salah!");
 		printf("\nTekan ENTER Untuk Melanjutkan.\n");
 		getch();
 	}
